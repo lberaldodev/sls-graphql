@@ -16,11 +16,11 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action: 
-        - dynamodb: GetItem
-        - dynamodb: PutItem
-        - dynamodb: Scan
-        - dynamodb: Query
-        - dynamodb: DescribeTable
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:Scan
+        - dynamodb:Query
+        - dynamodb:DescribeTable
       Resource:
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.HEROES_TABLE}"
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.SKILLS_TABLE}"
@@ -45,18 +45,19 @@ custom:
       #sempre que subir, rodar as configs etc.
       migrate: true 
       noStart: true
+      seed: true
       #seed ao inicializar o servico.
-      seed:
-        #baseado na tabela
-        heroes:
-          sources:
-            - table: ${self:provider.environment.HEROES_TABLE}
-              sources: ["./seed/heroes.json"]
-        skills:
-          sources:
-            - table: ${self:provider.environment.SKILLS_TABLE}
-              sources: ["./seed/skills.json"]
-              
+    seed:
+      #baseado na tabela
+      heroes:
+        sources:
+         - table: ${self:provider.environment.HEROES_TABLE}
+           sources: ["./seed/heroes.json"]
+      skills:
+        sources:
+         - table: ${self:provider.environment.SKILLS_TABLE}
+           sources: ["./seed/skills.json"]
+
 #http functions to access
 functions:
   hello:
