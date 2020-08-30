@@ -60,13 +60,19 @@ custom:
 
 #http functions to access
 functions:
-  hello:
-    handler: handler.hello
+  main:
+    handler: handler.main
     events:
       - http:
-          path: hello
+          path: main
           method: any
-  
+  graphql:
+    handler: handler.handler
+    events:
+      - http:
+          path: graphql
+          method: any  
+
 resources:
   Resources:
     Heroes:
