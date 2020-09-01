@@ -1,93 +1,88 @@
-"use strict";
-const uuid = require("uuid");
-const setupDynamoDB = require("./src/core/util/setupDynamoDB");
+'use strict';
 
-setupDynamoDB();
+const { ApolloServer, gql } = require('apollo-server-lambda');
+const setupDynamoDBClient = require('./src/core/util/setupDynamoDB')
+setupDynamoDBClient()
 
-const { ApolloServer, gql } = require("apollo-server-lambda");
-const HeroFactory = require("./src/core/factories/heroFactory");
-const SkillsFactory = require("./src/core/factories/skillsFactory");
+const HeroFactory = require('./src/core/factories/heroFactory')
+const SkillFactory = require('./src/core/factories/skillsFactory')
 
-// Construct a schema, using GraphQL schema language
-const typeDefs = gql`
-	type Query {
-		hello: String
-	}
-`;
+const isLocal = process.env.IS_LOCAL
 
-// Provide resolver functions for your schema fields
-const resolvers = {
-	Query: {
-		hello: () => "Hello world!",
-	},
-};
+const schema = require('./src/graphql')
 
 const server = new ApolloServer({
-	typeDefs,
-	resolvers,
+  schema ,
+  // permitir execucao no frontend e obtencao dos schemas
+  introspection: isLocal,
+  // frontend
+  playground: isLocal,
+  formatError(error) {
+    console.log("ERROR", error)
+    console.error('[Global error logger]', error)
+    return error
+  },
+  formatResponse(response) {
+    console.log('[Global logger]', response)
+    return response
+  }
 });
 
 exports.handler = server.createHandler({
-	cors: {
-		origin: "*",
-		credentials: true,
-	},
+  cors: {
+    origin: '*', 
+  },
 });
 
-async function main() {
-	console.log("creating factories");
+// async function main() {
+//   console.log('creating factories..')
+//   const skillFactory = await SkillFactory.createInstance()
+//   const heroFactory = await HeroFactory.createInstance()
 
-	const skillFactory = await SkillsFactory.createInstance();
+//   console.log('inserting skill item')
+//   const skillId = `${new Date().getTime()}`
+//   await skillFactory.create({
+//     id: skillId,
+//     name: 'mage',
+//     value: 50
+//   })
+//   console.log('getting skil item')
+//   const skillItem = await skillFactory.findOne(skillId)
+//   console.log('skillItem', skillItem)
 
-	const heroFactory = await HeroFactory.createInstance();
+//   const allSkills = await skillFactory.findAll()
+//   console.log('allSkills', allSkills)
 
-	const skill_id = uuid.v1();
+//   console.log('\n------------\n')
 
-	await skillFactory.create({
-		id: skill_id,
-		name: "mage",
-		value: 5,
-	});
+//   console.log('inserting hero item')
+//   const heroId = `${new Date().getTime()}`
+//   await heroFactory.create({
+//     id: heroId,
+//     name: 'Batman',
+//     skills: [skillId]
+//   })
 
-	console.log("get last skill inserted");
+//   const hero = await heroFactory.findOne(heroId)
+//   console.log('hero', hero)
 
-	const skill = await skillFactory.findOne(skill_id);
+//   const allHeroes = await heroFactory.findAll()
+//   console.log('allHeroes', allHeroes)
 
-	console.log(skill);
+//   return {
+//     statusCode: 200,
+//     body: JSON.stringify({
+//       hero: {
+//         hero,
+//         allHeroes
+//       },
+//       skill: {
+//         skillItem,
+//         allSkills
+//       }
+//     })
+//   }
 
-	console.log("get all skills");
+// }
 
-	const skills = await skillFactory.findAll();
-
-	console.log(skills);
-
-	const hero_id = uuid.v1();
-
-	await heroFactory.create({
-		id: hero_id,
-		name: "batman",
-		skills: [skill_id],
-	});
-
-	console.log("get last hero inserted");
-
-	const hero = await heroFactory.findOne(hero_id);
-
-	console.log(hero);
-
-	console.log("get all heros");
-
-	const heros = await heroFactory.findAll();
-
-	console.log(heros);
-
-	return {
-		statusCode: 200,
-		body: JSON.stringify({
-			heros,
-			skills,
-		}),
-	};
-}
-
-module.exports.main = main;
+// module.exports.test = main

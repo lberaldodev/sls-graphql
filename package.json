@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "apollo-server-lambda": "2.12.0",
+    "apollo-server-lambda": "2.10.0",
     "aws-sdk": "2.656.0",
     "dynamoose": "1.11.1",
     "graphql": "15.0.0"
@@ -20,6 +20,6 @@
     "nodemon": "^2.0.4",
     "serverless": "^1.80.0",
     "serverless-dynamodb-local": "^0.2.39",
-    "serverless-offline": "^6.6.0"
+    "serverless-offline": "6.5.0"
   }
 }

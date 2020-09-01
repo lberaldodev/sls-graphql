@@ -60,12 +60,6 @@ custom:
 
 #http functions to access
 functions:
-  main:
-    handler: handler.main
-    events:
-      - http:
-          path: main
-          method: any
   graphql:
     handler: handler.handler
     events:
