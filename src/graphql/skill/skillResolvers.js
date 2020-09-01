@@ -1,9 +1,15 @@
 const resolvers = {
+	// GET
 	Query: {
-		getSkill: async (root, args, context, info) => "Hello",
+		async getSkill(root, args, context, info) {
+			return context.Skill.findAll(args);
+		},
 	},
 	Mutation: {
-		createSkill: async (root, args, context, info) => "Hello"
+		async createSkill(root, args, context, info) {
+			const { id } = await context.Skill.create(args);
+			return id;
+		},
 	},
 };
 module.exports = resolvers;
